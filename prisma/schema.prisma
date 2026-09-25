@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum FileStatus {
+  ACTIVE
+  OPENED
+  DELETED
+}
+
+model TempFile {
+  id         String      @id @default(uuid()) @db.Uuid
+  objectKey  String      @map("object_key") @db.Text
+  wrappedKey Bytes       @map("wrapped_key")
+  iv         Bytes
+  status     FileStatus  @default(ACTIVE)
+  expiresAt  DateTime    @map("expires_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  openedAt   DateTime?   @map("opened_at")
+
+  @@map("temp_files")
+}
+
+model FileLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  fileId    String   @map("file_id") @db.Uuid
+  event     String   @map("event")
+  detail    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([fileId])
+  @@index([createdAt])
+  @@map("file_logs")
+}
