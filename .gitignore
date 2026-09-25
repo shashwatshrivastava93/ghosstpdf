@@ -41,3 +41,4 @@ next-env.d.ts
 # prisma
 node_modules/.prisma
 node_modules/@prisma/engines.next
+render.env
